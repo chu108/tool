@@ -48,7 +48,7 @@ func ReadFileForReader(fielPath string, callBak func(row string) bool) {
 			panic(err)
 		}
 		rowStr := BytesToStr(b)
-		if !callBak(rowStr) {
+		if rowStr != "" && !callBak(rowStr) {
 			break
 		}
 	}

@@ -49,3 +49,12 @@ func SleepRand(max, min int, t string) {
 		time.Sleep(time.Millisecond * time.Duration(GetRand(max, min)))
 	}
 }
+
+/**
+计算程序运行时间
+*/
+func TimeSince(callback func()) {
+	st := time.Now()
+	callback()
+	Info("exec Time: ", time.Since(st))
+}

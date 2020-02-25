@@ -2,6 +2,7 @@ package tool
 
 import (
 	"strings"
+	"unicode/utf8"
 	"unsafe"
 )
 
@@ -24,4 +25,25 @@ func JoinStr(strs ...string) string {
 		buider.WriteString(strs[i])
 	}
 	return buider.String()
+}
+
+//截取字符串
+func Substr(str string, length int) string {
+	runeStr := []rune(str)
+	runeLen := len(runeStr)
+	if runeLen > length {
+		str = string(runeStr[runeLen-length:])
+	}
+	return str
+}
+
+//高效截取字符串
+func SubStrDecode(str string, length int) string {
+	var size, n int
+	for i := 0; i < length && n < len(str); i++ {
+		_, size = utf8.DecodeRuneInString(str[n:])
+		n += size
+	}
+
+	return str[:n]
 }

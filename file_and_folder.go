@@ -68,7 +68,7 @@ func ReadFileForScanner(fielPath string, callBak func(row string) bool) {
 
 	for scanner.Scan() {
 		rowStr := BytesToStr(scanner.Bytes())
-		if !callBak(rowStr) {
+		if rowStr != "" && !callBak(rowStr) {
 			break
 		}
 	}

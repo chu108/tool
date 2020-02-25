@@ -50,7 +50,7 @@ func SubStrDecode(str string, length int) string {
 }
 
 //字符串替换
-func StrReplace(str string, rep ...string) string {
+func StrReplaceEmpty(str string, rep ...string) string {
 	for i := 0; i < len(rep); i++ {
 		str = strings.Replace(str, rep[i], "", -1)
 	}
@@ -58,7 +58,7 @@ func StrReplace(str string, rep ...string) string {
 }
 
 //字符串正则替换
-func StrRegexp(str string, math ...string) string {
+func StrRegexpEmpty(str string, math ...string) string {
 	for i := 0; i < len(math); i++ {
 		rep := regexp.MustCompile(math[i])
 		str = strings.Replace(str, rep.FindString(str), "", -1)

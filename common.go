@@ -1,6 +1,9 @@
 package tool
 
-import "os/exec"
+import (
+	"flag"
+	"os/exec"
+)
 
 //执行命令函数
 func Command(commName string, param []string) string {
@@ -16,4 +19,32 @@ func Command(commName string, param []string) string {
 		panic(outputStr)
 	}
 	return outputStr
+}
+
+//解析命令行字符串参数
+func FlagString(name, value, usage string) string {
+	val := flag.String(name, value, usage)
+	flag.Parse()
+	return *val
+}
+
+//解析命令行int参数
+func FlagInt(name string, value int, usage string) int {
+	val := flag.Int(name, value, usage)
+	flag.Parse()
+	return *val
+}
+
+//解析命令行int64参数
+func FlagInt64(name string, value int64, usage string) int64 {
+	val := flag.Int64(name, value, usage)
+	flag.Parse()
+	return *val
+}
+
+//解析命令行bool参数
+func FlagBool(name string, value bool, usage string) bool {
+	val := flag.Bool(name, value, usage)
+	flag.Parse()
+	return *val
 }

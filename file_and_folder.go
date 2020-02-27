@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"io"
 	"os"
+	"path/filepath"
 )
 
 //如果文件夹不存在，则递归创建文件夹
@@ -72,4 +73,32 @@ func ReadFileForScanner(fielPath string, callBak func(row string) bool) {
 			break
 		}
 	}
+}
+
+/**
+获取当前文件夹中的所有文件
+*/
+func ReadDirFiles(dir string) ([]string, error) {
+	fileList := make([]string, 0, 30)
+	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !info.IsDir() && info.Name()[:1] != "." {
+			fileList = append(fileList, dir+info.Name())
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return fileList, nil
+}
+
+/**
+递归获取当前文件夹中的所有文件与子文件
+*/
+func ReadDirFilesAll() {
+
 }

@@ -42,6 +42,13 @@ func FlagInt64(name string, value int64, usage string) int64 {
 	return *val
 }
 
+//解析命令行int64参数
+func FlagFloat64(name string, value int64, usage string) float64 {
+	val := flag.Float64(name, 0, usage)
+	flag.Parse()
+	return *val
+}
+
 //解析命令行bool参数
 func FlagBool(name string, value bool, usage string) bool {
 	val := flag.Bool(name, value, usage)

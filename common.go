@@ -6,7 +6,7 @@ import (
 )
 
 //执行命令函数
-func Command(commName string, param []string) string {
+func Command(commName string, param []string) (string, error) {
 	cmdPath, err := exec.LookPath(commName)
 	if err != nil {
 		panic(err)
@@ -16,9 +16,9 @@ func Command(commName string, param []string) string {
 	outputStr := BytesToStr(output)
 	if err != nil {
 		Err(cmd.String())
-		panic(outputStr)
+		return "", err
 	}
-	return outputStr
+	return outputStr, nil
 }
 
 //解析命令行字符串参数

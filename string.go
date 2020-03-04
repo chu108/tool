@@ -65,3 +65,18 @@ func ReplaceRegexpStrEmpty(str string, math ...string) string {
 	}
 	return str
 }
+
+//字符串拆分，按字数
+func StrSplitByNum(txt string, length int) []string {
+	txtRune := []rune(txt)
+	txtLen := len(txtRune)
+	retTxt := make([]string, 0, 5)
+	if txtLen > length {
+		for i := 0; i < txtLen; i += length {
+			retTxt = append(retTxt, string(txtRune[i:i+length]))
+		}
+	} else {
+		retTxt = append(retTxt, txt)
+	}
+	return retTxt
+}

@@ -118,10 +118,16 @@ func DownloadFile(url, savePath, saveName string) error {
 	if url == "" || savePath == "" {
 		return errors.New("下载url或保存地址错误")
 	}
+	//获取文件类型
+	fileExt := path.Ext(url)
 	//获取文件名
 	fileName := path.Base(url)
 	if saveName == "" {
 		saveName = fileName
+	}
+
+	if savePath[len(savePath)-1:] != "/" {
+		savePath += "/"
 	}
 
 	res, err := http.Get(url)
@@ -135,7 +141,7 @@ func DownloadFile(url, savePath, saveName string) error {
 		return err
 	}
 
-	file, err := os.Create(savePath + saveName)
+	file, err := os.Create(savePath + saveName + fileExt)
 	if err != nil {
 		return err
 	}

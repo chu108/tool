@@ -2,8 +2,11 @@ package tool
 
 import (
 	"bufio"
+	"errors"
 	"io"
+	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 )
 
@@ -101,4 +104,41 @@ func ReadDirFiles(dir string) ([]string, error) {
 */
 func ReadDirFilesAll() {
 
+}
+
+/**
+下载文件
+url：下载地址
+savePath：保存路径，不包含文件名
+saveName：保存文件名，如果为空，则用原名
+*/
+func DownloadFile(url, savePath, saveName string) error {
+	if url == "" || savePath == "" {
+		return errors.New("下载url或保存地址错误")
+	}
+	//获取文件名
+	fileName := path.Base(url)
+	if saveName == "" {
+		saveName = fileName
+	}
+
+	res, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	reader := bufio.NewReaderSize(res.Body, 32*1024)
+
+	file, err := os.Create(savePath + saveName)
+	if err != nil {
+		return err
+	}
+	writer := bufio.NewWriter(file)
+	writerLen, err := io.Copy(writer, reader)
+	if err != nil {
+		return err
+	}
+	Info("下载总长度：", writerLen)
+	return nil
 }

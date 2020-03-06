@@ -2,8 +2,10 @@ package tool
 
 import (
 	"bufio"
+	"bytes"
 	"errors"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
@@ -123,19 +125,22 @@ func DownloadFile(url, savePath, saveName string) error {
 	}
 
 	res, err := http.Get(url)
-	if err != nil {
+	if err != nil || res.StatusCode != 200 {
 		return err
 	}
 	defer res.Body.Close()
 
-	reader := bufio.NewReaderSize(res.Body, 32*1024)
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
 
 	file, err := os.Create(savePath + saveName)
 	if err != nil {
 		return err
 	}
-	writer := bufio.NewWriter(file)
-	writerLen, err := io.Copy(writer, reader)
+
+	writerLen, err := io.Copy(file, bytes.NewReader(body))
 	if err != nil {
 		return err
 	}

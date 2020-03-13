@@ -32,13 +32,7 @@ func DownloadFile(url, savePath, saveName string) error {
 		savePath += "/"
 	}
 
-	res, err := http.Get(url)
-	if err != nil || res.StatusCode != 200 {
-		return err
-	}
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := GetByteForUrl(url)
 	if err != nil {
 		return err
 	}
@@ -54,4 +48,17 @@ func DownloadFile(url, savePath, saveName string) error {
 	}
 	Info("下载总长度：", writerLen)
 	return nil
+}
+
+/**
+获取url返回的内容
+*/
+func GetByteForUrl(url string) ([]byte, error) {
+	res, err := http.Get(url)
+	if err != nil || res.StatusCode != 200 {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	return ioutil.ReadAll(res.Body)
 }

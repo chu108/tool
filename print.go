@@ -10,15 +10,9 @@ var (
 )
 
 func Err(errs ...interface{}) {
-	for i := 0; i < len(errs); i++ {
-		fmt.Print(red, errs[i], reset)
-	}
-	fmt.Print("\n")
+	fmt.Printf("%s %v %s \n", red, errs, reset)
 }
 
 func Info(infos ...interface{}) {
-	for i := 0; i < len(infos); i++ {
-		fmt.Print(green, infos[i], reset)
-	}
-	fmt.Print("\n")
+	fmt.Printf("%s %v %s \n", green, infos, reset)
 }

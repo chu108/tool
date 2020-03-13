@@ -3,6 +3,7 @@ package tool
 import (
 	"bytes"
 	"errors"
+	"github.com/PuerkitoBio/goquery"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -61,4 +62,46 @@ func GetByteForUrl(url string) ([]byte, error) {
 	defer res.Body.Close()
 
 	return ioutil.ReadAll(res.Body)
+}
+
+//请求url获取文档对象
+func Fetch(url string) (*goquery.Document, error) {
+
+	res, err := http.Get(url)
+	if err != nil || res.StatusCode != 200 {
+		return nil, err
+	}
+
+	defer res.Body.Close()
+
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return doc, nil
+}
+
+func FindList(url, find string, callBack func(i int, list *goquery.Selection)) error {
+	doc, err := Fetch(url)
+	if err != nil {
+		return err
+	}
+
+	doc.Find(find).Each(func(i int, selection *goquery.Selection) {
+		callBack(i, selection)
+	})
+
+	return nil
+}
+
+func FindOne(url, find string, callBack func(sel *goquery.Selection)) error {
+	doc, err := Fetch(url)
+	if err != nil {
+		return err
+	}
+
+	callBack(doc.Find(find))
+
+	return nil
 }

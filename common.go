@@ -2,16 +2,17 @@ package tool
 
 import (
 	"flag"
+	"fmt"
 	"os/exec"
 )
 
-//执行命令函数
-func Command(commName string, param []string) (string, error) {
+//执行命令并返回结果
+func Command(commName string, arg ...string) (string, error) {
 	cmdPath, err := exec.LookPath(commName)
 	if err != nil {
 		panic(err)
 	}
-	cmd := exec.Command(cmdPath, param...)
+	cmd := exec.Command(cmdPath, arg...)
 	output, err := cmd.CombinedOutput()
 	outputStr := BytesToStr(output)
 	if err != nil {
@@ -19,6 +20,40 @@ func Command(commName string, param []string) (string, error) {
 		return "", err
 	}
 	return outputStr, nil
+}
+
+//执行命令并直接输出结果
+func CommandPipe(commName string, arg ...string) error {
+	cmdPath, err := exec.LookPath(commName)
+	if err != nil {
+		panic(err)
+	}
+	cmd := exec.Command(cmdPath, arg...)
+	// 命令的错误输出和标准输出都连接到同一个管道
+	stdout, err := cmd.StdoutPipe()
+	cmd.Stderr = cmd.Stdout
+
+	if err != nil {
+		return err
+	}
+
+	if err = cmd.Start(); err != nil {
+		return err
+	}
+	// 从管道中实时获取输出并打印到终端
+	for {
+		tmp := make([]byte, 1024)
+		_, err := stdout.Read(tmp)
+		fmt.Print(string(tmp))
+		if err != nil {
+			break
+		}
+	}
+
+	if err = cmd.Wait(); err != nil {
+		return err
+	}
+	return nil
 }
 
 //解析命令行字符串参数

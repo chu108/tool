@@ -1,9 +1,12 @@
 package tool
 
 import (
+	"bytes"
+	"errors"
 	"flag"
 	"fmt"
 	"os/exec"
+	"strings"
 )
 
 //执行命令并返回结果
@@ -54,6 +57,23 @@ func CommandPipe(commName string, arg ...string) error {
 		return err
 	}
 	return nil
+}
+
+func CommandGrep(commName string, arg ...string) (string, error) {
+	cmdPath, err := exec.LookPath(commName)
+	if err != nil {
+		return "", err
+	}
+	cmd := exec.Command("bash", "-c", cmdPath + " " + strings.Join(arg, " "))
+	var out, stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	cmd.Stdout = &out
+	err = cmd.Run()
+	if err != nil {
+		fmt.Println(cmd.String())
+		return out.String(), errors.New(err.Error() + ":" + stderr.String())
+	}
+	return out.String(), nil
 }
 
 //解析命令行字符串参数

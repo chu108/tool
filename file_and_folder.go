@@ -102,3 +102,14 @@ func ReadDirFiles(dir string) ([]string, error) {
 func ReadDirFilesAll() {
 
 }
+
+/*
+获取文件大小
+*/
+func GetFileSize(file string) int64 {
+	fileInfo, err := os.Stat(file)
+	if err != nil {
+		return 0
+	}
+	return fileInfo.Size()
+}

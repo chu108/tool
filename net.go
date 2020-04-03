@@ -33,12 +33,18 @@ func DownloadFile(url, savePath, saveName string) error {
 		savePath += "/"
 	}
 
+	filePath := savePath + saveName + fileExt
+	if IsExist(filePath) {
+		Err(saveName, "文件已存在")
+		return nil
+	}
+
 	body, err := GetByteForUrl(url)
 	if err != nil {
 		return err
 	}
 
-	file, err := os.Create(savePath + saveName + fileExt)
+	file, err := os.Create(filePath)
 	if err != nil {
 		return err
 	}

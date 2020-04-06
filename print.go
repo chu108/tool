@@ -40,7 +40,7 @@ const (
 	white
 )
 
-const printCode = "\x1b[%dm%s\x1b[0m \n"
+const printCode = "\x1b[%dm%v\x1b[0m \n"
 
 func Err(errs ...interface{}) {
 	fmt.Printf(printCode, red, errs)

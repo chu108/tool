@@ -2,9 +2,17 @@ package tool
 
 import (
 	"bufio"
+	"golang.org/x/text/encoding/simplifiedchinese"
 	"io"
 	"os"
 	"path/filepath"
+)
+
+type Charset string
+
+const (
+	UTF8    = Charset("UTF-8")
+	GB18030 = Charset("GB18030")
 )
 
 //如果文件夹不存在，则递归创建文件夹
@@ -112,4 +120,19 @@ func GetFileSize(file string) int64 {
 		return 0
 	}
 	return fileInfo.Size()
+}
+
+func ConvertByte2String(byte []byte, charset Charset) string {
+
+	var str string
+	switch charset {
+	case GB18030:
+		var decodeBytes, _ = simplifiedchinese.GB18030.NewDecoder().Bytes(byte)
+		str = string(decodeBytes)
+	case UTF8:
+		fallthrough
+	default:
+		str = string(byte)
+	}
+	return str
 }

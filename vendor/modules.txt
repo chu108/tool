@@ -7,3 +7,9 @@ github.com/tealeg/xlsx
 # golang.org/x/net v0.0.0-20200202094626-16171245cfb2
 golang.org/x/net/html
 golang.org/x/net/html/atom
+# golang.org/x/text v0.3.0
+golang.org/x/text/encoding
+golang.org/x/text/encoding/internal
+golang.org/x/text/encoding/internal/identifier
+golang.org/x/text/encoding/simplifiedchinese
+golang.org/x/text/transform

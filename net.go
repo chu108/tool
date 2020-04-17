@@ -2,13 +2,23 @@ package tool
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"github.com/PuerkitoBio/goquery"
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
+	"strconv"
+	"strings"
+	"time"
+)
+
+const (
+	POST = "POST"
+	GET  = "GET"
 )
 
 /**
@@ -110,4 +120,90 @@ func FindOne(url, find string, callBack func(sel *goquery.Selection)) error {
 	callBack(doc.Find(find))
 
 	return nil
+}
+
+//http get请求
+func Get(url string, data map[string]interface{}, header map[string]string) ([]byte, error) {
+	return Request(GET, url, data, header)
+}
+
+//http post请求
+func Post(url string, data map[string]interface{}, header map[string]string) ([]byte, error) {
+	return Request(POST, url, data, header)
+}
+
+func Request(method, requestUrl string, data map[string]interface{}, header map[string]string) ([]byte, error) {
+	method = strings.ToUpper(method)
+	client := &http.Client{
+		Timeout: 3 * time.Second, //超时为5秒
+	}
+	var (
+		req  *http.Request
+		err  error
+		body io.Reader = nil
+	)
+
+	dataLen := len(data)
+	switch method {
+	case POST:
+		if dataLen > 0 {
+			bytesData, err := json.Marshal(data)
+			if err != nil {
+				return nil, err
+			}
+			body = bytes.NewReader(bytesData)
+		}
+		req, err = http.NewRequest(POST, requestUrl, body)
+	case GET:
+		if dataLen > 0 {
+			params := url.Values{}
+			for key, val := range data {
+				if value, ok := val.(string); ok {
+					params.Add(key, value)
+				}
+				if value, ok := val.(int); ok {
+					params.Add(key, strconv.Itoa(value))
+				}
+			}
+			URL, err := url.Parse(requestUrl)
+			if err != nil {
+				return nil, err
+			}
+			URL.RawQuery = params.Encode()
+			requestUrl = URL.String()
+		}
+		req, err = http.NewRequest(GET, requestUrl, nil)
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	headerLen := len(header)
+	if headerLen > 0 {
+		for key, val := range header {
+			if key == "cookie" {
+				SetCookie(req, val)
+			}
+			req.Header.Add(key, val)
+		}
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	return ioutil.ReadAll(resp.Body)
+}
+
+//设置cookie
+func SetCookie(req *http.Request, cookie string) {
+	cookie = strings.TrimSpace(cookie)
+	cks := strings.Split(cookie, ";")
+	for _, v := range cks {
+		item := strings.Split(v, "=")
+		cookieItem := &http.Cookie{Name: item[0], Value: item[1]}
+		req.AddCookie(cookieItem)
+	}
 }

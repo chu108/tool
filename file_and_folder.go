@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -135,4 +136,17 @@ func ConvertByte2String(byte []byte, charset Charset) string {
 		str = string(byte)
 	}
 	return str
+}
+
+/**
+一次性读取文件所有内容
+*/
+func ReadFile(fielPath string) ([]byte, error) {
+	file, err := os.OpenFile(fielPath, os.O_RDWR, 0777)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	return ioutil.ReadAll(file)
 }

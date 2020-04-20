@@ -207,3 +207,18 @@ func SetCookie(req *http.Request, cookie string) {
 		req.AddCookie(cookieItem)
 	}
 }
+
+//写入文件
+func WriteFile(filePath string, body []byte) error {
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+
+	writerLen, err := io.Copy(file, bytes.NewReader(body))
+	if err != nil {
+		return err
+	}
+	Info("写入长度：", writerLen)
+	return nil
+}

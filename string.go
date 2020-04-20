@@ -2,10 +2,15 @@ package tool
 
 import (
 	"regexp"
+	"strconv"
 	"strings"
+	"time"
 	"unicode/utf8"
 	"unsafe"
 )
+
+const DateTemp = "2006-01-02"
+const TimeTemp = "2006-01-02 15:04:05"
 
 //字符串转byte
 func StrToBytes(s string) []byte {
@@ -79,4 +84,46 @@ func StrSplitByNum(txt string, length int) []string {
 		retTxt = append(retTxt, txt)
 	}
 	return retTxt
+}
+
+//字符串转int
+func StrToInt(s string) (int, error) {
+	return strconv.Atoi(s)
+}
+
+//字符串转int64
+func StrToInt64(s string) (int64, error) {
+	return strconv.ParseInt(s, 10, 64)
+}
+
+//字符串转float
+func StrToFloat64(s string) (float64, error) {
+	return strconv.ParseFloat(s, 64)
+}
+
+//int字符串转日期字符串
+func StrToDateStr(s string) (string, error) {
+	i, err := StrToInt64(s)
+	if err != nil {
+		return "", err
+	}
+	return time.Unix(i, 0).Format(DateTemp), nil
+}
+
+//int字符串转时间字符串
+func StrToDateTimeStr(s string) (string, error) {
+	i, err := StrToInt64(s)
+	if err != nil {
+		return "", err
+	}
+	return time.Unix(i, 0).Format(TimeTemp), nil
+}
+
+//日期字符串转时间对象
+func StrToTime(s string) (time.Time, error) {
+	loc, err := time.LoadLocation("Local")
+	if err != nil {
+		return time.Time{}, err
+	}
+	return time.ParseInLocation(TimeTemp, s, loc)
 }

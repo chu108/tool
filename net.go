@@ -135,7 +135,8 @@ func Post(url string, data map[string]interface{}, header map[string]string) ([]
 func Request(method, requestUrl string, data map[string]interface{}, header map[string]string) ([]byte, error) {
 	method = strings.ToUpper(method)
 	client := &http.Client{
-		Timeout: 3 * time.Second, //超时为5秒
+		Timeout:   3 * time.Second, //超时为3秒
+		Transport: http.DefaultTransport,
 	}
 	var (
 		req  *http.Request

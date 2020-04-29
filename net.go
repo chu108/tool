@@ -44,7 +44,7 @@ func DownloadFile(url, savePath, saveName string) error {
 	}
 
 	filePath := savePath + saveName + fileExt
-	if IsExist(filePath) {
+	if IsExist(filePath) && GetFileSize(filePath) > 0 {
 		Err(saveName, "文件已存在")
 		return nil
 	}
@@ -64,6 +64,10 @@ func DownloadFile(url, savePath, saveName string) error {
 		return err
 	}
 	Info("下载总长度：", writerLen)
+	if writerLen == 0 {
+		os.Remove(filePath)
+	}
+
 	return nil
 }
 

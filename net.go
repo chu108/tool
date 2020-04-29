@@ -7,6 +7,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"io"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -139,7 +140,8 @@ func Post(url string, data map[string]interface{}, header map[string]string) ([]
 func Request(method, requestUrl string, data map[string]interface{}, header map[string]string) ([]byte, error) {
 	method = strings.ToUpper(method)
 	client := &http.Client{
-		Timeout: 3 * time.Second, //超时为5秒
+		Timeout:   3 * time.Second, //超时为3秒
+		Transport: http.DefaultTransport,
 	}
 	var (
 		req  *http.Request
@@ -225,4 +227,22 @@ func WriteFile(filePath string, body []byte) error {
 	}
 	Info("写入长度：", writerLen)
 	return nil
+}
+
+//tcp端口检测
+func TcpGather(ip, port string) bool {
+	if ip == "" || port == "" {
+		return false
+	}
+	addr := net.JoinHostPort(ip, port)
+	timeout := 3 * time.Second
+	conn, err := net.DialTimeout("tcp", addr, timeout)
+	if err != nil {
+		return false
+	}
+	defer conn.Close()
+	if conn != nil {
+		return true
+	}
+	return false
 }

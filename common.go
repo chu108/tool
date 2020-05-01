@@ -18,6 +18,7 @@ func Command(commName string, arg ...string) (string, error) {
 	cmd := exec.Command(cmdPath, arg...)
 	output, err := cmd.CombinedOutput()
 	outputStr := BytesToStr(output)
+	Info(cmd.String())
 	if err != nil {
 		Err(cmd.String())
 		return "", err
@@ -64,7 +65,7 @@ func CommandGrep(commName string, arg ...string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	cmd := exec.Command("bash", "-c", cmdPath + " " + strings.Join(arg, " "))
+	cmd := exec.Command("bash", "-c", cmdPath+" "+strings.Join(arg, " "))
 	var out, stderr bytes.Buffer
 	cmd.Stderr = &stderr
 	cmd.Stdout = &out

@@ -23,12 +23,14 @@ type LogMsg struct {
 }
 
 var (
-	logger             *log.Logger
 	F                  *os.File
+	logger             *log.Logger
 	DefaultPrefix      = ""
 	DefaultCallerDepth = 2
 	logPrefix          = "log"
+	logTimeFormat      = "20060102"
 	levelFlags         = []string{"DEBUG", "INFO", "WARN", "ERROR", "FATAL"}
+	curTime            = time.Now().Format(logTimeFormat)
 )
 
 const (
@@ -40,8 +42,8 @@ const (
 )
 
 func init() {
-	filePath := getLogPath()
-	logger = log.New(filePath, DefaultPrefix, 0)
+	F := getLogPath()
+	logger = log.New(F, DefaultPrefix, 0)
 }
 
 func Debug(v ...interface{}) {
@@ -65,15 +67,20 @@ func Fatal(v ...interface{}) {
 }
 
 func SetPrefix(prefix string) {
-	initPath := fmt.Sprintf("%s/log/%s_%s.%s", getPwd(), logPrefix, time.Now().Format("20060102"), "log")
+	curTime = time.Now().Format(logTimeFormat)
+	initPath := fmt.Sprintf("%s/log/%s_%s.%s", getPwd(), logPrefix, curTime, "log")
 	if tool.IsExist(initPath) && tool.GetFileSize(initPath) == 0 {
 		_ = os.Remove(initPath)
 	}
 	logPrefix = prefix
-	logger = log.New(getLogPath(), DefaultPrefix, 0)
+	F = getLogPath()
+	logger = log.New(F, DefaultPrefix, 0)
 }
 
 func printJson(level Level, kv ...interface{}) {
+	if curTime != time.Now().Format(logTimeFormat) {
+		SetPrefix(logPrefix)
+	}
 	_, file, line, _ := runtime.Caller(DefaultCallerDepth)
 	lg := &LogMsg{
 		Prifix: logPrefix,

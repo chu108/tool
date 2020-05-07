@@ -40,15 +40,7 @@ const (
 )
 
 func init() {
-	dir, err := os.Getwd()
-	if err != nil {
-		dir = "."
-	}
-	filePath := fmt.Sprintf("%s/log/%s%s.%s", dir, logPrefix, time.Now().Format("20060102"), "log")
-	err = tool.CreateFileByNot(dir)
-	if err != nil {
-		tool.Err(err)
-	}
+	filePath := getLogPath()
 	handle, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		tool.Err(err)
@@ -109,4 +101,17 @@ func printJson(level Level, kv ...interface{}) {
 		tool.Info(msgStr)
 		logger.Println(msgStr)
 	}
+}
+
+func getLogPath() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		dir = "."
+	}
+	filePath := fmt.Sprintf("%s/log/%s%s.%s", dir, logPrefix, time.Now().Format("20060102"), "log")
+	err = tool.CreateFileByNot(dir)
+	if err != nil {
+		tool.Err(err)
+	}
+	return filePath
 }

@@ -105,7 +105,7 @@ func getLogPath() *os.File {
 	if err != nil {
 		dir = "."
 	}
-	filePath := fmt.Sprintf("%s/log/%s%s.%s", dir, logPrefix, time.Now().Format("20060102"), "log")
+	filePath := fmt.Sprintf("%s/log/%s_%s.%s", dir, logPrefix, time.Now().Format("20060102"), "log")
 	err = tool.CreateFileByNot(dir)
 	if err != nil {
 		tool.Err(err)

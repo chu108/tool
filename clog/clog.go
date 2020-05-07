@@ -27,7 +27,7 @@ var (
 	F                  *os.File
 	DefaultPrefix      = ""
 	DefaultCallerDepth = 2
-	logPrefix          = "-"
+	logPrefix          = "log_"
 	levelFlags         = []string{"DEBUG", "INFO", "WARN", "ERROR", "FATAL"}
 )
 
@@ -41,11 +41,7 @@ const (
 
 func init() {
 	filePath := getLogPath()
-	handle, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		tool.Err(err)
-	}
-	logger = log.New(handle, DefaultPrefix, 0)
+	logger = log.New(filePath, DefaultPrefix, 0)
 }
 
 func Debug(v ...interface{}) {
@@ -70,6 +66,7 @@ func Fatal(v ...interface{}) {
 
 func SetPrefix(prefix string) {
 	logPrefix = prefix
+	logger = log.New(getLogPath(), DefaultPrefix, 0)
 }
 
 func printJson(level Level, kv ...interface{}) {
@@ -103,7 +100,7 @@ func printJson(level Level, kv ...interface{}) {
 	}
 }
 
-func getLogPath() string {
+func getLogPath() *os.File {
 	dir, err := os.Getwd()
 	if err != nil {
 		dir = "."
@@ -113,5 +110,9 @@ func getLogPath() string {
 	if err != nil {
 		tool.Err(err)
 	}
-	return filePath
+	handle, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		tool.Err(err)
+	}
+	return handle
 }

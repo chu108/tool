@@ -27,7 +27,7 @@ var (
 	F                  *os.File
 	DefaultPrefix      = ""
 	DefaultCallerDepth = 2
-	logPrefix          = "log_"
+	logPrefix          = "log"
 	levelFlags         = []string{"DEBUG", "INFO", "WARN", "ERROR", "FATAL"}
 )
 
@@ -65,6 +65,10 @@ func Fatal(v ...interface{}) {
 }
 
 func SetPrefix(prefix string) {
+	initPath := fmt.Sprintf("%s/log/%s_%s.%s", getPwd(), logPrefix, time.Now().Format("20060102"), "log")
+	if tool.IsExist(initPath) && tool.GetFileSize(initPath) == 0 {
+		_ = os.Remove(initPath)
+	}
 	logPrefix = prefix
 	logger = log.New(getLogPath(), DefaultPrefix, 0)
 }
@@ -101,12 +105,9 @@ func printJson(level Level, kv ...interface{}) {
 }
 
 func getLogPath() *os.File {
-	dir, err := os.Getwd()
-	if err != nil {
-		dir = "."
-	}
+	dir := getPwd()
 	filePath := fmt.Sprintf("%s/log/%s_%s.%s", dir, logPrefix, time.Now().Format("20060102"), "log")
-	err = tool.CreateFileByNot(dir)
+	err := tool.CreateFileByNot(dir)
 	if err != nil {
 		tool.Err(err)
 	}
@@ -115,4 +116,12 @@ func getLogPath() *os.File {
 		tool.Err(err)
 	}
 	return handle
+}
+
+func getPwd() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		dir = "."
+	}
+	return dir
 }

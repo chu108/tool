@@ -114,6 +114,7 @@ func printJson(level Level, kv ...interface{}) {
 func getLogPath() *os.File {
 	dir := getPwd()
 	filePath := fmt.Sprintf("%s/log/%s_%s.%s", dir, logPrefix, time.Now().Format("20060102"), "log")
+	tool.Info("创建日志文件：", filePath)
 	err := tool.CreateFileByNot(dir)
 	if err != nil {
 		tool.Err(err)

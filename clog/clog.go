@@ -30,7 +30,7 @@ var (
 	logPrefix          = "log"
 	logTimeFormat      = "20060102"
 	levelFlags         = []string{"DEBUG", "INFO", "WARN", "ERROR", "FATAL"}
-	curTime            = time.Now().Format(logTimeFormat)
+	curTime            = ""
 )
 
 const (
@@ -40,11 +40,6 @@ const (
 	ERROR
 	FATAL
 )
-
-func init() {
-	F := getLogPath()
-	logger = log.New(F, DefaultPrefix, 0)
-}
 
 func Debug(v ...interface{}) {
 	printJson(DEBUG, v...)
@@ -67,12 +62,8 @@ func Fatal(v ...interface{}) {
 }
 
 func SetPrefix(prefix string) {
-	curTime = time.Now().Format(logTimeFormat)
-	initPath := fmt.Sprintf("%s/log/%s_%s.%s", getPwd(), logPrefix, curTime, "log")
-	if tool.IsExist(initPath) && tool.GetFileSize(initPath) == 0 {
-		_ = os.Remove(initPath)
-	}
 	logPrefix = prefix
+	curTime = time.Now().Format(logTimeFormat)
 	F = getLogPath()
 	logger = log.New(F, DefaultPrefix, 0)
 }

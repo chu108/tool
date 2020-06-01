@@ -19,11 +19,7 @@ func Command(commName string, arg ...string) (string, error) {
 	output, err := cmd.CombinedOutput()
 	outputStr := BytesToStr(output)
 	Info(cmd.String())
-	if err != nil {
-		Err(cmd.String())
-		return "", err
-	}
-	return outputStr, nil
+	return outputStr, err
 }
 
 //执行命令并直接输出结果

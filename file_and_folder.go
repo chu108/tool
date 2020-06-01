@@ -106,6 +106,27 @@ func ReadDirFiles(dir string) ([]string, error) {
 }
 
 /**
+获取当前文件夹中的所有文件
+*/
+func ReadDirFileInfos(dir string) ([]os.FileInfo, error) {
+	fileList := make([]os.FileInfo, 0, 30)
+	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !info.IsDir() && info.Name()[:1] != "." {
+			fileList = append(fileList, info)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return fileList, nil
+}
+
+/**
 递归获取当前文件夹中的所有文件与子文件
 */
 func ReadDirFilesAll() {

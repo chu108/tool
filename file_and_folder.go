@@ -2,6 +2,7 @@ package tool
 
 import (
 	"bufio"
+	"bytes"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"io"
 	"io/ioutil"
@@ -170,4 +171,34 @@ func ReadFile(fielPath string) ([]byte, error) {
 	defer file.Close()
 
 	return ioutil.ReadAll(file)
+}
+
+//写入文件
+func WriteFile(filePath string, body []byte) error {
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+
+	writerLen, err := io.Copy(file, bytes.NewReader(body))
+	if err != nil {
+		return err
+	}
+	Info("写入长度：", writerLen)
+	return nil
+}
+
+//写入文件
+func WriteFileAppend(filePath string, body []byte) error {
+	var file *os.File
+	var err error
+	file, err = os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	writerLen, err := file.Write(body)
+	Info("写入长度：", writerLen)
+	return nil
 }

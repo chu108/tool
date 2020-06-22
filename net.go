@@ -38,6 +38,7 @@ func DownloadFile(url, savePath, saveName string) (string, error) {
 	fileName := path.Base(url)
 	if saveName == "" {
 		saveName = fileName
+		saveName = strings.Replace(saveName, fileExt, "", -1)
 	}
 
 	if savePath[len(savePath)-1:] != "/" {

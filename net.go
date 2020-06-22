@@ -231,3 +231,28 @@ func TcpGather(ip, port string) bool {
 	}
 	return false
 }
+
+/**
+获取重写向地址
+*/
+func GetRedirect(url string) (*url.URL, error) {
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	client := new(http.Client)
+	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		return errors.New("Redirect")
+	}
+
+	response, err := client.Do(req)
+	if err != nil {
+		if response != nil && response.StatusCode == http.StatusFound { //status code 302
+			return response.Location()
+		} else {
+			return nil, err
+		}
+	}
+	return nil, nil
+}

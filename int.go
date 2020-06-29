@@ -15,6 +15,7 @@ min: 5 最小数
 ret: 5-10 之间的数
 */
 func GetRand(max, min int) int {
+	rand.Seed(time.Now().UnixNano())
 	return rand.Intn(max) + min
 }
 

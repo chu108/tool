@@ -10,6 +10,8 @@ type workerPool struct {
 	wg        sync.WaitGroup
 }
 
+var defaultCapacity = 5
+
 //创建协程池
 func NewWorkerPool() *workerPool {
 	wp := new(workerPool)
@@ -18,6 +20,9 @@ func NewWorkerPool() *workerPool {
 
 //开始并设置协程数
 func (pool *workerPool) Open(capacity int) {
+	if capacity == 0 {
+		capacity = defaultCapacity
+	}
 	pool.capacity = capacity
 	pool.taskQueue = make(chan func(), pool.capacity)
 	pool.execTask()

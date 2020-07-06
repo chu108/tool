@@ -10,15 +10,17 @@ type workerPool struct {
 	wg        sync.WaitGroup
 }
 
-//创建携程池
-func NewWorkerPool(capacity int) *workerPool {
+//创建协程池
+func NewWorkerPool() *workerPool {
 	wp := new(workerPool)
-	wp.capacity = capacity
-	wp.taskQueue = make(chan func(), wp.capacity)
-
-	wp.execTask()
-
 	return wp
+}
+
+//开始并设置协程数
+func (pool *workerPool) Start(capacity int) {
+	pool.capacity = capacity
+	pool.taskQueue = make(chan func(), pool.capacity)
+	pool.execTask()
 }
 
 //执行任务
@@ -50,7 +52,7 @@ func (pool *workerPool) Add(fn func()) {
 }
 
 //关闭任务
-func (pool *workerPool) Run() {
+func (pool *workerPool) Close() {
 	close(pool.taskQueue)
 	pool.wg.Wait()
 }

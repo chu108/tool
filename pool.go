@@ -17,7 +17,7 @@ func NewWorkerPool() *workerPool {
 }
 
 //开始并设置协程数
-func (pool *workerPool) Start(capacity int) {
+func (pool *workerPool) Open(capacity int) {
 	pool.capacity = capacity
 	pool.taskQueue = make(chan func(), pool.capacity)
 	pool.execTask()

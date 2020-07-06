@@ -1,36 +1,56 @@
 package tool
 
-import "sync"
+import (
+	"sync"
+)
 
-type wpool struct {
-	Channel chan int
-	Wg      *sync.WaitGroup
-	Work    []func()
+type workerPool struct {
+	taskQueue chan func()
+	capacity  int
+	wg        sync.WaitGroup
 }
 
-func NewPool(num int) *wpool {
-	wp := new(wpool)
-	wp.Wg = new(sync.WaitGroup)
-	wp.Work = make([]func(), 0, 10)
-	wp.Channel = make(chan int, num)
+//创建携程池
+func NewWorkerPool(capacity int) *workerPool {
+	wp := new(workerPool)
+	wp.capacity = capacity
+	wp.taskQueue = make(chan func(), wp.capacity)
+
+	wp.execTask()
+
 	return wp
 }
 
-func (wp *wpool) Add(callFunc func()) {
-	wp.Work = append(wp.Work, callFunc)
+//执行任务
+func (pool *workerPool) execTask() {
+	for i := 0; i < pool.capacity; i++ {
+		pool.wg.Add(1)
+		go func() {
+			defer func() {
+				pool.wg.Done()
+			}()
+			for {
+				select {
+				case fn, ok := <-pool.taskQueue:
+					if !ok {
+						return
+					}
+					if fn != nil {
+						fn()
+					}
+				}
+			}
+		}()
+	}
 }
 
-func (wp *wpool) Run() {
-	for k, work := range wp.Work {
-		wp.Wg.Add(1)
-		wp.Channel <- k
-		go func(callBack func()) {
-			callBack()
-			defer func() {
-				<-wp.Channel
-				wp.Wg.Done()
-			}()
-		}(work)
-	}
-	wp.Wg.Wait()
+//添加任务
+func (pool *workerPool) Add(fn func()) {
+	pool.taskQueue <- fn
+}
+
+//关闭任务
+func (pool *workerPool) Run() {
+	close(pool.taskQueue)
+	pool.wg.Wait()
 }

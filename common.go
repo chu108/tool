@@ -67,7 +67,7 @@ func CommandGrep(commName string, arg ...string) (string, error) {
 	cmd.Stdout = &out
 	err = cmd.Run()
 	if err != nil {
-		fmt.Println(cmd.String())
+		//fmt.Println(cmd.String())
 		return out.String(), errors.New(err.Error() + ":" + stderr.String())
 	}
 	return out.String(), nil

@@ -18,7 +18,7 @@ func Command(commName string, arg ...string) (string, error) {
 	cmd := exec.Command(cmdPath, arg...)
 	output, err := cmd.CombinedOutput()
 	outputStr := BytesToStr(output)
-	Info(cmd.String())
+
 	return outputStr, err
 }
 

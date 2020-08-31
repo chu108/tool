@@ -11,9 +11,9 @@ func OpenBrowser(url string) (err error) {
 	case "windows": //windows
 		err = exec.Command(`cmd`, `/c`, `start`, url).Start()
 	case "darwin": //Linux
-		err = exec.Command(`xdg-open`, url).Start()
-	default: //Mac
 		err = exec.Command(`open`, url).Start()
+	default: //Mac
+		err = exec.Command(`xdg-open`, url).Start()
 	}
 	return
 }

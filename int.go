@@ -81,3 +81,51 @@ func Int64ToDateStr(i int64) string {
 func Int64ToDateTimeStr(i int64) string {
 	return time.Unix(i, 0).Format(TimeTemp)
 }
+
+//INT最大值
+func MaxInt(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+//INT64最大值
+func MaxInt64(a, b int64) int64 {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+//FLOAT最大值
+func MaxFloat(a, b float64) float64 {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+//INT最小值
+func MinInt(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+//INT64最小值
+func MinInt64(a, b int64) int64 {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+//FLOAT最小值
+func MinFloat(a, b float64) float64 {
+	if a < b {
+		return a
+	}
+	return b
+}

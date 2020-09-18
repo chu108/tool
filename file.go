@@ -8,6 +8,9 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
+	"sort"
+	"strconv"
 )
 
 type Charset string
@@ -201,4 +204,39 @@ func WriteFileAppend(filePath string, body []byte) error {
 	writerLen, err := file.Write(body)
 	Info("写入长度：", writerLen)
 	return nil
+}
+
+//读取目录文件并按文件名中的数字排序
+func ReadFileOrderByDir(dir string) ([]string, error) {
+	list, err := ioutil.ReadDir(dir)
+	if err != nil {
+		return nil, err
+	}
+	sort.Slice(list, func(i, j int) bool {
+		s, _ := strconv.Atoi(regexp.MustCompile(`[0-9]+`).FindString(list[i].Name()))
+		e, _ := strconv.Atoi(regexp.MustCompile(`[0-9]+`).FindString(list[j].Name()))
+		return s < e
+	})
+	fileList := make([]string, 0, 10)
+	for _, v := range list {
+		if !v.IsDir() {
+			fileList = append(fileList, dir+"/"+v.Name())
+		}
+	}
+	return fileList, err
+}
+
+//读取目录中的目录
+func ReadDirByDir(dir string) ([]string, error) {
+	list, err := ioutil.ReadDir(dir)
+	if err != nil {
+		return nil, err
+	}
+	fileList := make([]string, 0, 10)
+	for _, v := range list {
+		if v.IsDir() {
+			fileList = append(fileList, dir+"/"+v.Name())
+		}
+	}
+	return fileList, err
 }

@@ -1,7 +1,9 @@
 package tool
 
 import (
+	"golang.org/x/text/encoding/simplifiedchinese"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -126,4 +128,17 @@ func StrToTime(s string) (time.Time, error) {
 		return time.Time{}, err
 	}
 	return time.ParseInLocation(TimeTemp, s, loc)
+}
+
+/**
+中文拼音排序
+*/
+func PySort(strArr []string) []string {
+	enc := simplifiedchinese.GB18030.NewEncoder()
+	sort.Slice(strArr, func(i, j int) bool {
+		cnamei, _ := enc.String(strArr[i])
+		cnamej, _ := enc.String(strArr[j])
+		return strings.Compare(cnamei, cnamej) < 0
+	})
+	return strArr
 }

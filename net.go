@@ -210,7 +210,7 @@ func SetCookie(req *http.Request, cookie string) {
 	cks := strings.Split(cookie, ";")
 	for _, v := range cks {
 		item := strings.Split(v, "=")
-		cookieItem := &http.Cookie{Name: item[0], Value: item[1]}
+		cookieItem := &http.Cookie{Name: item[0], Value: url.QueryEscape(item[1])}
 		req.AddCookie(cookieItem)
 	}
 }

@@ -140,9 +140,13 @@ func Post(url string, data map[string]interface{}, header map[string]string) ([]
 
 func Request(method, requestUrl string, data map[string]interface{}, header map[string]string) ([]byte, error) {
 	method = strings.ToUpper(method)
+	t := http.DefaultTransport.(*http.Transport).Clone()
+	t.MaxIdleConns = 100       //连接池最大连接数量
+	t.MaxConnsPerHost = 50     //每个host的最大连接数量，0表示不限制
+	t.MaxIdleConnsPerHost = 10 //每个host的连接池最大空闲连接数,默认2
 	client := &http.Client{
 		Timeout:   3 * time.Second, //超时为3秒
-		Transport: http.DefaultTransport,
+		Transport: t,
 	}
 	var (
 		req  *http.Request

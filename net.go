@@ -2,6 +2,7 @@ package tool
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"github.com/PuerkitoBio/goquery"
@@ -140,7 +141,10 @@ func Post(url string, data map[string]interface{}, header map[string]string) ([]
 
 func Request(method, requestUrl string, data map[string]interface{}, header map[string]string) ([]byte, error) {
 	method = strings.ToUpper(method)
-	t := http.DefaultTransport.(*http.Transport).Clone()
+	//t := http.DefaultTransport.(*http.Transport).Clone()
+	t := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
 	t.MaxIdleConns = 100       //连接池最大连接数量
 	t.MaxConnsPerHost = 50     //每个host的最大连接数量，0表示不限制
 	t.MaxIdleConnsPerHost = 10 //每个host的连接池最大空闲连接数,默认2
